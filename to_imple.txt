@@ -1,0 +1,7 @@
+# Need to have
+- floats
+- log 
+
+# Nice to have
+- scheme comments
+- String operations
