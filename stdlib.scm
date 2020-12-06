@@ -76,5 +76,5 @@
   (if (or (null? a) (null? b))
     '()
     (cons 
-      (cons (car a) (car b))
+      (list (car a) (car b))
       (zip (cdr a) (cdr b)))))

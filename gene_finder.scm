@@ -48,6 +48,27 @@
 (define get-trans   (curry nth 1))
 (define get-emmis   (curry nth 2))
 
+(define (matrix-inc-pair mat pair)
+  (matrix-inc (nth 1 pair) (car pair) mat))
+
+(define (sum-cols mat)
+  (foldl 
+    (lambda (a b) (map (curry apply +) (zip a b)))
+    (car mat)
+    (cdr mat)))
+
+(define (training-by-counting model x z)
+  (list
+    (lst-inc (car z) (get-init model))
+    (foldl
+      matrix-inc-pair
+      (get-trans model)
+      (zip z (cdr z)))
+    (foldl 
+      matrix-inc-pair
+      (get-emmis model)
+      (zip x z))))
 
 (load "data/genome1.scm")
-(matrix-inc 1 1 (get-trans (null-model 7 4)))
+(load "data/true-ann1.scm")
+(training-by-counting (null-model 7 4) genome1 true-ann1)
