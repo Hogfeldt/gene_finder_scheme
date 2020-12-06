@@ -51,23 +51,37 @@
 (define (matrix-inc-pair mat pair)
   (matrix-inc (nth 1 pair) (car pair) mat))
 
-(define (sum-cols mat)
+(define (sum-axis-1 mat)
+  (map (curry apply +) mat))
+
+(define (sum-axis-0 mat)
   (foldl 
     (lambda (a b) (map (curry apply +) (zip a b)))
     (car mat)
     (cdr mat)))
 
+(define (normalize mat)
+  (map 
+    (lambda (pair) (if (zero? (nth 1 pair))
+                     (car pair)
+                     (map (curry (flip /) (nth 1 pair)) (car pair)))) 
+    (zip mat (sum-axis-1 mat))))
+
 (define (training-by-counting model x z)
   (list
     (lst-inc (car z) (get-init model))
-    (foldl
+    (normalize (foldl
       matrix-inc-pair
       (get-trans model)
-      (zip z (cdr z)))
-    (foldl 
+      (zip z (cdr z))))
+    (normalize (foldl 
       matrix-inc-pair
       (get-emmis model)
-      (zip x z))))
+      (zip x z)))))
+
+(define mat '((1 2 3) (4 5 6)))
+(zip mat (sum-axis-1 mat))
+(normalize '((1 2 3) (4 5 6)))
 
 (load "data/genome1.scm")
 (load "data/true-ann1.scm")
