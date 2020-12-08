@@ -1,4 +1,4 @@
-(load "stdlib.scm")
+(load "../scheme/stdlib.scm")
 
 (define (cons-n-times x lst n) 
   (if (zero? n) 
@@ -39,11 +39,6 @@
 (define (matrix-inc i j mat) 
   (matrix-add 1 i j mat))
 
-(define (nth n lst)
-  (if (zero? n)
-    (car lst)
-    (nth (- n 1) (cdr lst))))
-
 (define get-init    car)
 (define get-trans   (curry nth 1))
 (define get-emmis   (curry nth 2))
@@ -66,23 +61,3 @@
                      (car pair)
                      (map (curry (flip /) (nth 1 pair)) (car pair)))) 
     (zip mat (sum-axis-1 mat))))
-
-(define (training-by-counting model x z)
-  (list
-    (lst-inc (car z) (get-init model))
-    (normalize (foldl
-      matrix-inc-pair
-      (get-trans model)
-      (zip z (cdr z))))
-    (normalize (foldl 
-      matrix-inc-pair
-      (get-emmis model)
-      (zip x z)))))
-
-(define mat '((1 2 3) (4 5 6)))
-(zip mat (sum-axis-1 mat))
-(normalize '((1 2 3) (4 5 6)))
-
-(load "data/genome1.scm")
-(load "data/true-ann1.scm")
-(training-by-counting (null-model 7 4) genome1 true-ann1)
