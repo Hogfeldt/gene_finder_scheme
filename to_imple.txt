@@ -1,4 +1,0 @@
-# Nice to have
-- scheme comments
-- Better error messages
-- String operations
