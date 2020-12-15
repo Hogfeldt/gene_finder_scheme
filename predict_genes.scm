@@ -2,6 +2,10 @@
 (load "utility.scm")
 (load "model.scm")
 (load "data/genome6.scm")
+(load "data/genome7.scm")
+(load "data/genome8.scm")
+(load "data/genome9.scm")
+(load "data/genome10.scm")
 
 (define (vlog lst)
   (map 
@@ -49,21 +53,21 @@
         omega)
       (cdr xs))))
 
-(define omega 
+(define (omega model xs)
   (compute-omega 
     model 
     (cons 
       (vsum 
         (vlog (get-init model)) 
-        (vlog (nth-col (car genome6) (get-emmis model))))
+        (vlog (nth-col (car xs) (get-emmis model))))
       '())
-    (cdr genome6)))
+    (cdr xs)))
 
 
-(define (backtrack model omega xs zs)
+(define (compute-backtrack model omega xs zs)
   (if (null? omega)
     zs
-    (backtrack
+    (compute-backtrack
       model
       (cdr omega)
       (cdr xs)
@@ -78,8 +82,28 @@
                    (vlog (nth-col (car zs) (get-trans model)))))))
         zs))))
 
-(backtrack 
-  model 
-  (cdr omega) 
-  genome6 
-  (list (car (argmax (car omega)))))
+(define (backtrack model omega xs)
+  (compute-backtrack 
+    model 
+    (cdr omega) 
+    xs 
+    (list (car (argmax (car omega))))))
+
+
+(define omega6 (omega model genome6))
+(define pred6 (backtrack model omega6 genome6))
+(define omega7 (omega model genome7))
+(define pred7 (backtrack model omega7 genome7))
+(define omega8 (omega model genome8))
+(define pred8 (backtrack model omega8 genome8))
+(define omega9 (omega model genome9))
+(define pred9 (backtrack model omega9 genome9))
+(define omega10 (omega model genome10))
+(define pred10 (backtrack model omega10 genome10))
+
+(list 
+  pred6
+  pred7
+  pred8
+  pred9
+  pred10)
