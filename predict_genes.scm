@@ -10,12 +10,32 @@
                   (log 2 x)))
     lst))
 
+(define (scalar-add-lst a lst)
+  (map  (curry + a) lst))
+
+(define (scalar-add-mat a mat)
+  (map  (curry scalar-add-lst a) mat))
+
 (define (vmax lst)
   (fold
     (lambda (old new) (if (> old new) old new))
     (car lst)
     (cdr lst)))
 
+(define (seq n)
+  (if (zero? n)
+    '()
+    (cons n (seq (- n 1)))))
+
+(define (argmax lst)
+  (fold
+    (lambda (old new) (if (> (nth 1 old) (nth 1 new)) old new))
+    (list
+      0
+      (car lst))
+    (zip 
+      (reverse (seq (length lst)))
+      (cdr lst))))
 
 (define (compute-omega model omega xs) 
   (if (null? xs)
@@ -39,19 +59,27 @@
       '())
     (cdr genome6)))
 
-(define (seq n)
-  (if (zero? n)
-    '()
-    (cons n (seq (- n 1)))))
 
-(define (argmax lst)
-  (fold
-    (lambda (old new) (if (> (nth 1 old) (nth 1 new)) old new))
-    (list
-      0
-      (car lst))
-    (zip 
-      (reverse (seq (length lst)))
-      (cdr lst))))
+(define (backtrack model omega xs zs)
+  (if (null? omega)
+    zs
+    (backtrack
+      model
+      (cdr omega)
+      (cdr xs)
+      (cons 
+        (car (argmax 
+               (scalar-add-lst
+                 (log 
+                   2 
+                   (nth (car zs) (nth (car xs) (get-emmis model))))
+                 (vsum 
+                   (car omega)
+                   (vlog (nth-col (car zs) (get-trans model)))))))
+        zs))))
 
-(argmax (car omega))
+(backtrack 
+  model 
+  (cdr omega) 
+  genome6 
+  (list (car (argmax (car omega)))))
