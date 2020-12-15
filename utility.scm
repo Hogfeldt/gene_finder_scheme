@@ -17,6 +17,18 @@
     (zeros K K)
     (zeros K D)))
 
+(define (ones n m)
+  (cons-n-times 
+    (cons-n-times 1 '() m) 
+    '() 
+    n))
+
+(define (pseudo-count-model K D)
+  (list 
+    (car (ones 1 K))
+    (ones K K)
+    (ones K D)))
+
 (define (lst-add n i lst)
   (if (zero? i)
     (cons 
@@ -49,11 +61,11 @@
 (define (sum-axis-1 mat)
   (map (curry apply +) mat))
 
+(define (vsum xs ys)
+  (map (curry apply +) (zip xs ys)))
+
 (define (sum-axis-0 mat)
-  (foldl 
-    (lambda (a b) (map (curry apply +) (zip a b)))
-    (car mat)
-    (cdr mat)))
+  (foldl vsum (car mat) (cdr mat)))
 
 (define (normalize mat)
   (map 
@@ -61,3 +73,11 @@
                      (car pair)
                      (map (curry (flip /) (nth 1 pair)) (car pair)))) 
     (zip mat (sum-axis-1 mat))))
+
+(define (nth-col n mat)
+  (map (curry nth n) mat))
+
+(define (transpose mat)
+  (if (null? (cdr (car mat)))
+    (list (map car mat))
+    (cons (map car mat) (transpose (map cdr mat)))))

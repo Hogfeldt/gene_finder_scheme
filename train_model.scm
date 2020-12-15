@@ -22,7 +22,8 @@
       (get-emmis model)
       (zip x z)))))
 
-(training-by-counting (null-model 7 4) 
+
+(training-by-counting (pseudo-count-model 7 4) 
                       (foldl append 
                              genome1 
                              (list genome2 genome3 genome4 genome5))

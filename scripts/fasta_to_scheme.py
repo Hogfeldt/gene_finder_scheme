@@ -51,7 +51,7 @@ def schemefy(input_file, output_file):
     else:
         conv_func = translate_observations_to_indices
     with open(output_file, 'w') as fp:
-        seq = " ".join(conv_func(seqs[fasta_name][:10000]))
+        seq = " ".join(conv_func(seqs[fasta_name][:500]))
         fp.write(f"(define {fasta_name} '({seq}))\n")
     
 
